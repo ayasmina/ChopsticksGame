@@ -1,4 +1,3 @@
-// ChopsticksGame.java
 public class ChopsticksGame {
     private int p1Left;
     private int p1Right;
@@ -9,12 +8,10 @@ public class ChopsticksGame {
     private boolean gameOver;
     private int winner;
 
-    // Constructor to initialize the game
     public ChopsticksGame() {
         resetGame();
     }
 
-    // Reset the game to initial state
     public void resetGame() {
         p1Left = 1;
         p1Right = 1;
@@ -25,13 +22,11 @@ public class ChopsticksGame {
         winner = 0;
     }
 
-    // Method to check if a move is valid
     public boolean isValidMove(String playerHand, String opponentHand) {
         if (gameOver) {
             return false;
         }
 
-        // Check if the specified hands are active
         if (currentPlayer == 1) {
             if ((playerHand.equals("left") && p1Left == 0) ||
                     (playerHand.equals("right") && p1Right == 0)) {
@@ -54,18 +49,15 @@ public class ChopsticksGame {
         return true;
     }
 
-    // Method to make a move
     public boolean makeMove(String playerHand, String opponentHand) {
         if (!isValidMove(playerHand, opponentHand)) {
             return false;
         }
 
-        // Determine attacking value
         int attackValue;
         if (currentPlayer == 1) {
             attackValue = playerHand.equals("left") ? p1Left : p1Right;
 
-            // Apply attack to opponent's hand
             if (opponentHand.equals("left")) {
                 p2Left += attackValue;
                 if (p2Left >= MAX_FINGERS) {
@@ -80,7 +72,6 @@ public class ChopsticksGame {
         } else {
             attackValue = playerHand.equals("left") ? p2Left : p2Right;
 
-            // Apply attack to opponent's hand
             if (opponentHand.equals("left")) {
                 p1Left += attackValue;
                 if (p1Left >= MAX_FINGERS) {
@@ -94,10 +85,8 @@ public class ChopsticksGame {
             }
         }
 
-        // Check for winner
         checkWinner();
 
-        // Switch turns if game is not over
         if (!gameOver) {
             currentPlayer = (currentPlayer == 1) ? 2 : 1;
         }
@@ -105,7 +94,6 @@ public class ChopsticksGame {
         return true;
     }
 
-    // Method to check if there's a winner
     public void checkWinner() {
         boolean p1Alive = (p1Left > 0) || (p1Right > 0);
         boolean p2Alive = (p2Left > 0) || (p2Right > 0);
@@ -119,7 +107,6 @@ public class ChopsticksGame {
         }
     }
 
-    // Method to get the current game state
     public String getGameState() {
         return String.format(
                 "Player 1: Left=%d, Right=%d\n" +
@@ -129,14 +116,12 @@ public class ChopsticksGame {
         );
     }
 
-    // Add support for the splitting move variant
     public boolean splitFingers(int leftAmount, int rightAmount) {
         if (gameOver) {
             return false;
         }
 
         if (currentPlayer == 1) {
-            // Check if split is valid
             if (leftAmount + rightAmount != p1Left + p1Right ||
                     leftAmount < 0 || rightAmount < 0 ||
                     leftAmount >= MAX_FINGERS || rightAmount >= MAX_FINGERS) {
@@ -145,7 +130,6 @@ public class ChopsticksGame {
             p1Left = leftAmount;
             p1Right = rightAmount;
         } else {
-            // Check if split is valid
             if (leftAmount + rightAmount != p2Left + p2Right ||
                     leftAmount < 0 || rightAmount < 0 ||
                     leftAmount >= MAX_FINGERS || rightAmount >= MAX_FINGERS) {
@@ -155,7 +139,6 @@ public class ChopsticksGame {
             p2Right = rightAmount;
         }
 
-        // Switch turns
         currentPlayer = (currentPlayer == 1) ? 2 : 1;
         return true;
     }
@@ -169,4 +152,12 @@ public class ChopsticksGame {
     public boolean isGameOver() { return gameOver; }
     public int getWinner() { return winner; }
 }
+
+//add other variations `
+//fix ai end move
+//fix pxp give diff background to dif players
+//add delay to pcp 2 sec
+//
+
+
 

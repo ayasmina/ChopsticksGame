@@ -1,5 +1,4 @@
 
-// ChopsticksGameGUI.java
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -21,46 +20,37 @@ public class ChopsticksGameGUI {
         game = new ChopsticksGame();
         ai = new ChopsticksAI();
         vsComputer = true;
-        aiDifficulty = 2;  // Medium difficulty by default
+        aiDifficulty = 3;  //medium by default
 
-        // Create and setup the GUI
         createAndShowGUI();
     }
 
-    // Create and setup the GUI
     private void createAndShowGUI() {
         // Create main frame
         frame = new JFrame("Chopsticks Game");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-        frame.setSize(500, 400);
+        frame.setSize(600, 500);   //fix
 
-        // Create game settings panel
         JPanel settingsPanel = createSettingsPanel();
         frame.add(settingsPanel, BorderLayout.NORTH);
 
-        // Create game board panel
         JPanel gamePanel = createGamePanel();
         frame.add(gamePanel, BorderLayout.CENTER);
 
-        // Create status panel
         JPanel statusPanel = createStatusPanel();
         frame.add(statusPanel, BorderLayout.SOUTH);
 
-        // Display the window
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-        // Update the UI to match the game state
         updateUI();
     }
 
-    // Create settings panel
     private JPanel createSettingsPanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
 
-        // Game mode selection
         JRadioButton pvpButton = new JRadioButton("Player vs Player");
         JRadioButton pvcButton = new JRadioButton("Player vs Computer", true);
         ButtonGroup modeGroup = new ButtonGroup();
@@ -70,8 +60,7 @@ public class ChopsticksGameGUI {
         pvpButton.addActionListener(e -> vsComputer = false);
         pvcButton.addActionListener(e -> vsComputer = true);
 
-        // Difficulty selection
-        JLabel difficultyLabel = new JLabel("AI Difficulty:");
+        JLabel difficultyLabel = new JLabel(" Difficulty lvl:");
         JComboBox<String> difficultyComboBox = new JComboBox<>(
                 new String[]{"Easy", "Medium", "Hard"}
         );
@@ -80,15 +69,14 @@ public class ChopsticksGameGUI {
             aiDifficulty = difficultyComboBox.getSelectedIndex() + 1;
         });
 
-        // New game button
         newGameButton = new JButton("New Game");
         newGameButton.addActionListener(e -> resetGame());
 
-        // Split button
+
         splitButton = new JButton("Split");
         splitButton.addActionListener(e -> showSplitDialog());
 
-        // Add components to panel
+
         panel.add(pvpButton);
         panel.add(pvcButton);
         panel.add(difficultyLabel);
@@ -99,7 +87,7 @@ public class ChopsticksGameGUI {
         return panel;
     }
 
-    // Create game panel
+
     private JPanel createGamePanel() {
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(2, 2, 10, 10));
@@ -120,7 +108,7 @@ public class ChopsticksGameGUI {
         return panel;
     }
 
-    // Create status panel
+
     private JPanel createStatusPanel() {
         JPanel panel = new JPanel();
         statusLabel = new JLabel("Player 1's turn");
@@ -128,32 +116,32 @@ public class ChopsticksGameGUI {
         return panel;
     }
 
-    // Update the UI to match the game state
+
     private void updateUI() {
-        // Update hand displays
+
         p1LeftHand.updateHand(game.getP1Left());
         p1RightHand.updateHand(game.getP1Right());
         p2LeftHand.updateHand(game.getP2Left());
         p2RightHand.updateHand(game.getP2Right());
 
-        // Update status label
+
         if (game.isGameOver()) {
             statusLabel.setText("Game Over! Player " + game.getWinner() + " wins!");
         } else {
             statusLabel.setText("Player " + game.getCurrentPlayer() + "'s turn");
         }
 
-        // Enable/disable split button based on current player
+
         splitButton.setEnabled(!game.isGameOver());
     }
 
-    // Reset the game
+
     private void resetGame() {
         game.resetGame();
         updateUI();
     }
 
-    // Show dialog for splitting fingers
+
     private void showSplitDialog() {
         if (game.isGameOver()) {
             return;
@@ -199,7 +187,6 @@ public class ChopsticksGameGUI {
 
             updateUI();
 
-            // If playing against computer and it's the computer's turn, make the computer move
             if (vsComputer && game.getCurrentPlayer() == 2 && !game.isGameOver()) {
                 makeComputerMove();
             }
@@ -208,19 +195,16 @@ public class ChopsticksGameGUI {
         }
     }
 
-    // Make computer move
     private void makeComputerMove() {
         if (game.isGameOver() || game.getCurrentPlayer() != 2) {
             return;
         }
 
-        // Add a small delay to make the computer move more natural
         Timer timer = new Timer(500, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String[] move;
 
-                // Choose move based on difficulty
                 switch (aiDifficulty) {
                     case 1:  // Easy - Random moves
                         move = ai.getRandomMove(game);
@@ -245,7 +229,6 @@ public class ChopsticksGameGUI {
         timer.start();
     }
 
-    // Hand panel class
     private class HandPanel extends JPanel {
         private int player;
         private String hand;
@@ -261,7 +244,6 @@ public class ChopsticksGameGUI {
             setBorder(BorderFactory.createLineBorder(Color.BLACK));
             setPreferredSize(new Dimension(100, 100));
 
-            // Add mouse listener for hand selection
             addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
@@ -270,13 +252,11 @@ public class ChopsticksGameGUI {
             });
         }
 
-        // Update hand display
         public void updateHand(int count) {
             this.fingerCount = count;
             repaint();
         }
 
-        // Handle click on hand
         private void handleClick() {
             if (game.isGameOver()) {
                 return;
@@ -284,14 +264,11 @@ public class ChopsticksGameGUI {
 
             int currentPlayer = game.getCurrentPlayer();
 
-            // Don't allow clicking on hands for computer player if in vs computer mode
             if (vsComputer && currentPlayer == 2) {
                 return;
             }
 
-            // Don't allow clicking on hands for non-current player
             if (this.player != currentPlayer) {
-                // This is a target hand
                 if (HandSelectionManager.hasSelectedHand()) {
                     String targetHand = this.hand.toLowerCase();
                     String sourceHand = HandSelectionManager.getSelectedHand().toLowerCase();
@@ -301,17 +278,14 @@ public class ChopsticksGameGUI {
                         HandSelectionManager.clearSelectedHand();
                         updateUI();
 
-                        // If playing against computer and it's the computer's turn, make the computer move
                         if (vsComputer && game.getCurrentPlayer() == 2 && !game.isGameOver()) {
                             makeComputerMove();
                         }
                     }
                 }
             } else {
-                // This is a source hand
                 if (this.fingerCount > 0) {
                     HandSelectionManager.setSelectedHand(this.hand);
-                    // Update all hand panels to show selection
                     p1LeftHand.repaint();
                     p1RightHand.repaint();
                     p2LeftHand.repaint();
@@ -324,15 +298,13 @@ public class ChopsticksGameGUI {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
 
-            // Create a Graphics2D object for better rendering
+
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-            // Draw background
             g2d.setColor(Color.WHITE);
             g2d.fillRect(0, 0, getWidth(), getHeight());
 
-            // Draw hand outline
             if (player == game.getCurrentPlayer() && hand.equalsIgnoreCase(HandSelectionManager.getSelectedHand())) {
                 // Highlight selected hand
                 g2d.setColor(Color.YELLOW);
@@ -344,15 +316,12 @@ public class ChopsticksGameGUI {
                 g2d.setStroke(new BasicStroke(1));
             }
 
-            // Draw hand shape
             int palmX = getWidth() / 2;
             int palmY = getHeight() / 2;
             int palmSize = Math.min(getWidth(), getHeight()) / 3;
 
-            // Draw palm
             g2d.drawOval(palmX - palmSize/2, palmY - palmSize/2, palmSize, palmSize);
 
-            // Draw fingers
             if (fingerCount > 0) {
                 double angleStep = Math.PI / (fingerCount + 1);
                 double startAngle = hand.equalsIgnoreCase("Left") ? Math.PI : 0;
@@ -367,12 +336,10 @@ public class ChopsticksGameGUI {
                 }
             }
 
-            // Draw player and hand info
             g2d.drawString("P" + player + " " + hand + ": " + fingerCount, 5, 15);
         }
     }
 
-    // Static class to manage hand selection
     private static class HandSelectionManager {
         private static String selectedHand = null;
 
@@ -393,7 +360,6 @@ public class ChopsticksGameGUI {
         }
     }
     public static void main(String[] args) {
-        // Use the Event Dispatch Thread for Swing applications
         SwingUtilities.invokeLater(() -> {
             new ChopsticksGameGUI();
         });

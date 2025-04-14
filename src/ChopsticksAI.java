@@ -1,11 +1,9 @@
 
-// ChopsticksAI.java
 import java.util.*;
-
+//computer part
 public class ChopsticksAI {
     private Random random = new Random();
 
-    // Simple AI that randomly selects a valid move
     public String[] getRandomMove(ChopsticksGame game) {
         List<String[]> validMoves = getAllValidMoves(game);
         if (validMoves.isEmpty()) {
@@ -14,7 +12,6 @@ public class ChopsticksAI {
         return validMoves.get(random.nextInt(validMoves.size()));
     }
 
-    // Get all valid moves for the current player
     public List<String[]> getAllValidMoves(ChopsticksGame game) {
         List<String[]> validMoves = new ArrayList<>();
 
@@ -32,7 +29,6 @@ public class ChopsticksAI {
         return validMoves;
     }
 
-    // Advanced AI using minimax algorithm
     public String[] getBestMove(ChopsticksGame game, int depth) {
         GameState currentState = new GameState(
                 game.getP1Left(), game.getP1Right(),
@@ -58,7 +54,6 @@ public class ChopsticksAI {
     }
 
     private int minimax(GameState state, int depth, boolean isMaximizing) {
-        // Check if the game is over or we've reached the maximum depth
         int winner = checkWinner(state);
         if (winner == 1) {
             return 10;
@@ -71,7 +66,6 @@ public class ChopsticksAI {
         List<GameState> nextStates = generateNextStates(state);
 
         if (nextStates.isEmpty()) {
-            // No valid moves, this player loses
             return isMaximizing ? -10 : 10;
         }
 
@@ -93,7 +87,6 @@ public class ChopsticksAI {
     }
 
     private int evaluateState(GameState state) {
-        // Simple evaluation: difference in total fingers
         int p1Score = state.p1Left + state.p1Right;
         int p2Score = state.p2Left + state.p2Right;
 
@@ -116,7 +109,6 @@ public class ChopsticksAI {
     private List<GameState> generateNextStates(GameState state) {
         List<GameState> nextStates = new ArrayList<>();
 
-        // For each valid move, apply it and add the resulting state
         if (state.currentPlayer == 1) {
             // Player 1's turn
             if (state.p1Left > 0) {
@@ -159,14 +151,12 @@ public class ChopsticksAI {
     }
 
     private GameState applyMove(GameState state, String playerHand, String opponentHand) {
-        // Create a copy of the state
         GameState newState = new GameState(
                 state.p1Left, state.p1Right,
                 state.p2Left, state.p2Right,
                 state.currentPlayer
         );
 
-        // Apply the move
         if (newState.currentPlayer == 1) {
             int attackValue = playerHand.equals("left") ? newState.p1Left : newState.p1Right;
 
@@ -197,13 +187,11 @@ public class ChopsticksAI {
             }
         }
 
-        // Switch turns
         newState.currentPlayer = (newState.currentPlayer == 1) ? 2 : 1;
 
         return newState;
     }
 
-    // Helper class to represent game state for the minimax algorithm
     private class GameState {
         int p1Left, p1Right, p2Left, p2Right;
         int currentPlayer;
