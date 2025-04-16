@@ -157,7 +157,7 @@ public class ChopsticksGame {
 //fix ai end move
 //fix pxp give diff background to dif players
 //add delay to pcp 2 sec
-//
+//look into interface and what L said
 
 
 
