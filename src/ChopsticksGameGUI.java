@@ -157,7 +157,7 @@ public class ChopsticksGameGUI {
         }
 
         if (totalFingers <= 0) {
-            JOptionPane.showMessageDialog(frame, "You don't have any fingers to split!");
+            JOptionPane.showMessageDialog(frame, "No fingers for you to split!");
             return;
         }
 
@@ -200,7 +200,8 @@ public class ChopsticksGameGUI {
             return;
         }
 
-        Timer timer = new Timer(500, new ActionListener() {
+        Timer timer = new Timer(1000, new ActionListener() {  // Changed from 500 to 1000 ms
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 String[] move;
@@ -298,7 +299,7 @@ public class ChopsticksGameGUI {
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
 
-
+            Graphics2D g1d = (Graphics2D )g;
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -307,7 +308,9 @@ public class ChopsticksGameGUI {
 
             if (player == game.getCurrentPlayer() && hand.equalsIgnoreCase(HandSelectionManager.getSelectedHand())) {
                 // Highlight selected hand
-                g2d.setColor(Color.YELLOW);
+                g1d.setColor(Color.GRAY);
+                g1d.fillRect(0, 0, getWidth(), getHeight());
+                g2d.setColor(Color.PINK);
                 g2d.fillRect(0, 0, getWidth(), getHeight());
                 g2d.setColor(Color.BLUE);
                 g2d.setStroke(new BasicStroke(3));

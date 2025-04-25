@@ -192,6 +192,7 @@ public class ChopsticksAI {
         return newState;
     }
 
+
     private class GameState {
         int p1Left, p1Right, p2Left, p2Right;
         int currentPlayer;

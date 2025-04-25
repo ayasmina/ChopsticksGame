@@ -156,8 +156,10 @@ public class ChopsticksGame {
 //add other variations `
 //fix ai end move
 //fix pxp give diff background to dif players
-//add delay to pcp 2 sec
-//look into interface and what L said
+//add delay to pcg 2 sec DOOOONE
+//look into interface and what Logan said
+//Work on th split kay lague
+//work on g1d for computer side as p1 under  paintComponen
 
 
 
