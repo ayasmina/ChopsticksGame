@@ -1,10 +1,13 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class ChopsticksGame {
     private int p1Left;
     private int p1Right;
     private int p2Left;
     private int p2Right;
-    private int currentPlayer;  // 1 or 2
-    private final int MAX_FINGERS = 5;  // When a hand reaches this value, it's "out"
+    private int currentPlayer;
+    private final int MAX_FINGERS = 5;
     private boolean gameOver;
     private int winner;
 
@@ -17,7 +20,7 @@ public class ChopsticksGame {
         p1Right = 1;
         p2Left = 1;
         p2Right = 1;
-        currentPlayer = 1;  // Player 1 starts
+        currentPlayer = 1;
         gameOver = false;
         winner = 0;
     }
@@ -27,25 +30,34 @@ public class ChopsticksGame {
             return false;
         }
 
+        if (playerHand == null || opponentHand == null ||
+                (!playerHand.equalsIgnoreCase("left") && !playerHand.equalsIgnoreCase("right")) ||
+                (!opponentHand.equalsIgnoreCase("left") && !opponentHand.equalsIgnoreCase("right"))) {
+            return false;
+        }
+
         if (currentPlayer == 1) {
-            if ((playerHand.equals("left") && p1Left == 0) ||
-                    (playerHand.equals("right") && p1Right == 0)) {
-                return false;  // Can't use an inactive hand to attack
-            }
-            if ((opponentHand.equals("left") && p2Left == 0) ||
-                    (opponentHand.equals("right") && p2Right == 0)) {
-                return false;  // Can't attack an inactive hand
-            }
-        } else {
-            if ((playerHand.equals("left") && p2Left == 0) ||
-                    (playerHand.equals("right") && p2Right == 0)) {
+            int attackingValue = playerHand.equalsIgnoreCase("left") ? p1Left : p1Right;
+            if (attackingValue == 0) {
                 return false;
             }
-            if ((opponentHand.equals("left") && p1Left == 0) ||
-                    (opponentHand.equals("right") && p1Right == 0)) {
+
+            int targetValue = opponentHand.equalsIgnoreCase("left") ? p2Left : p2Right;
+            if (targetValue == 0) {
+                return false;
+            }
+        } else {
+            int attackingValue = playerHand.equalsIgnoreCase("left") ? p2Left : p2Right;
+            if (attackingValue == 0) {
+                return false;
+            }
+
+            int targetValue = opponentHand.equalsIgnoreCase("left") ? p1Left : p1Right;
+            if (targetValue == 0) {
                 return false;
             }
         }
+
         return true;
     }
 
@@ -55,35 +67,29 @@ public class ChopsticksGame {
         }
 
         int attackValue;
-        if (currentPlayer == 1) {
-            attackValue = playerHand.equals("left") ? p1Left : p1Right;
 
-            if (opponentHand.equals("left")) {
-                p2Left += attackValue;
-                if (p2Left >= MAX_FINGERS) {
-                    p2Left = 0;  // Hand is out
-                }
+        if (currentPlayer == 1) {
+            attackValue = playerHand.equalsIgnoreCase("left") ? p1Left : p1Right;
+
+            if (opponentHand.equalsIgnoreCase("left")) {
+                int newValue = (p2Left + attackValue) % MAX_FINGERS;
+                p2Left = newValue == 0 ? 0 : newValue;
             } else {
-                p2Right += attackValue;
-                if (p2Right >= MAX_FINGERS) {
-                    p2Right = 0;  // Hand is out
-                }
+                int newValue = (p2Right + attackValue) % MAX_FINGERS;
+                p2Right = newValue == 0 ? 0 : newValue;
             }
         } else {
-            attackValue = playerHand.equals("left") ? p2Left : p2Right;
+            attackValue = playerHand.equalsIgnoreCase("left") ? p2Left : p2Right;
 
-            if (opponentHand.equals("left")) {
-                p1Left += attackValue;
-                if (p1Left >= MAX_FINGERS) {
-                    p1Left = 0;  // Hand is out
-                }
+            if (opponentHand.equalsIgnoreCase("left")) {
+                int newValue = (p1Left + attackValue) % MAX_FINGERS;
+                p1Left = newValue == 0 ? 0 : newValue;
             } else {
-                p1Right += attackValue;
-                if (p1Right >= MAX_FINGERS) {
-                    p1Right = 0;  // Hand is out
-                }
+                int newValue = (p1Right + attackValue) % MAX_FINGERS;
+                p1Right = newValue == 0 ? 0 : newValue;
             }
         }
+
 
         checkWinner();
 
@@ -98,49 +104,54 @@ public class ChopsticksGame {
         boolean p1Alive = (p1Left > 0) || (p1Right > 0);
         boolean p2Alive = (p2Left > 0) || (p2Right > 0);
 
-        if (!p1Alive) {
-            winner = 2;  // Player 2 wins
+        if (!p2Alive || (currentPlayer == 2 && getAllValidMoves().isEmpty())) {
+            winner = 1;
             gameOver = true;
-        } else if (!p2Alive) {
-            winner = 1;  // Player 1 wins
+        } else if (!p1Alive || (currentPlayer == 1 && getAllValidMoves().isEmpty())) {
+            winner = 2;
             gameOver = true;
         }
+    }
+
+    private List<String[]> getAllValidMoves() {
+        List<String[]> moves = new ArrayList<>();
+
+        if (gameOver) {
+            return moves;
+        }
+
+        String[] playerHands = {"left", "right"};
+        String[] opponentHands = {"left", "right"};
+
+        for (String playerHand : playerHands) {
+            int attackValue = currentPlayer == 1 ?
+                    (playerHand.equals("left") ? p1Left : p1Right ):
+                    (playerHand.equals("left") ? p2Left : p2Right);
+
+            if (attackValue == 0) continue;
+
+            for (String opponentHand : opponentHands) {
+                int targetValue = currentPlayer == 1 ?
+                        (opponentHand.equals("left") ? p2Left : p2Right) :
+                        (opponentHand.equals("left") ? p1Left : p1Right);
+
+                if (targetValue == 0) continue;
+
+                moves.add(new String[]{playerHand, opponentHand});
+            }
+        }
+
+        return moves;
     }
 
     public String getGameState() {
         return String.format(
                 "Player 1: Left=%d, Right=%d\n" +
                         "Player 2: Left=%d, Right=%d\n" +
-                        "Current Player: %d",
-                p1Left, p1Right, p2Left, p2Right, currentPlayer
+                        "Current Player: %d\n" +
+                        "Game Over: %b, Winner: %d",
+                p1Left, p1Right, p2Left, p2Right, currentPlayer, gameOver, winner
         );
-    }
-
-    public boolean splitFingers(int leftAmount, int rightAmount) {
-        if (gameOver) {
-            return false;
-        }
-
-        if (currentPlayer == 1) {
-            if (leftAmount + rightAmount != p1Left + p1Right ||
-                    leftAmount < 0 || rightAmount < 0 ||
-                    leftAmount >= MAX_FINGERS || rightAmount >= MAX_FINGERS) {
-                return false;
-            }
-            p1Left = leftAmount;
-            p1Right = rightAmount;
-        } else {
-            if (leftAmount + rightAmount != p2Left + p2Right ||
-                    leftAmount < 0 || rightAmount < 0 ||
-                    leftAmount >= MAX_FINGERS || rightAmount >= MAX_FINGERS) {
-                return false;
-            }
-            p2Left = leftAmount;
-            p2Right = rightAmount;
-        }
-
-        currentPlayer = (currentPlayer == 1) ? 2 : 1;
-        return true;
     }
 
     // Getters
@@ -152,14 +163,3 @@ public class ChopsticksGame {
     public boolean isGameOver() { return gameOver; }
     public int getWinner() { return winner; }
 }
-
-//add other variations `
-//fix ai end move
-//fix pxp give diff background to dif players
-//add delay to pcg 2 sec DOOOONE
-//look into interface and what Logan said
-//Work on th split kay lague
-//work on g1d for computer side as p1 under  paintComponen
-
-
-
