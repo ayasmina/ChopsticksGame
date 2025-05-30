@@ -253,10 +253,18 @@ public class ChopsticksGameGUI {
         Timer timer = new Timer(1000, e -> {
             String[] move;
             switch (aiDifficulty) {
-                case 1 -> move = ai.getRandomMove(game);
-                case 2 -> move = ai.getBestMove(game, 2);
-                case 3 -> move = ai.getBestMove(game, 4);
-                default -> move = ai.getRandomMove(game);
+                case 1:
+                    move = ai.getRandomMove(game);
+                    break;
+                case 2:
+                    move = ai.getBestMove(game, 2);
+                    break;
+                case 3:
+                    move = ai.getBestMove(game, 4);
+                    break;
+                default:
+                    move = ai.getRandomMove(game);
+                    break;
             }
 
             if (move != null) {
@@ -411,14 +419,15 @@ public class ChopsticksGameGUI {
 
 
     private void applyGameStyle(Component component) {
-        if (component instanceof JComponent jc) {
+        if (component instanceof JComponent) {
+            JComponent jc = (JComponent) component;
             jc.setBackground(BACKGROUND_COLOR);
             jc.setForeground(TEXT_COLOR);
             jc.setFont(new Font("Segoe UI", Font.PLAIN, 14));
         }
 
-
-        if (component instanceof Container container) {
+        if (component instanceof Container) {
+            Container container = (Container) component;
             for (Component child : container.getComponents()) {
                 applyGameStyle(child);
             }
